@@ -7,5 +7,5 @@ import java.time.LocalDateTime
  */
 data class ExaminationEvent(var examinationName: String,
                             var place: String,
-                            var reminders: Pair<ReminderType, MutableList<LocalDateTime>>)
+                            var reminders: Pair<ReminderType, MutableList<LocalDateTime>>) :Event
 

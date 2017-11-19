@@ -8,5 +8,4 @@ import java.time.LocalDateTime
 data class TakeMedicamentsEvent(
         var medicamentName: String,
         var dose: String,
-        var reminders: Pair<ReminderType, MutableList<LocalDateTime>>
-)
+        var reminders: Pair<ReminderType, MutableList<LocalDateTime>>) : Event
