@@ -23,12 +23,12 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        if (ActivityCompat.checkSelfPermission(applicationContext,
-                Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED)
+        if (ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED)
             runActivityFunctions()
         else
             ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.READ_CALENDAR),
+                    arrayOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR),
                     CALENDAR_PERMISSION_REQUESTCODE)
 
     }
