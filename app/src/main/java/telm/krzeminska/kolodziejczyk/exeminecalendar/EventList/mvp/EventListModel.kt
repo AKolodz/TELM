@@ -1,12 +1,9 @@
 package telm.krzeminska.kolodziejczyk.exeminecalendar.EventList.mvp
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
-import android.content.pm.PackageManager
 import android.database.Cursor
 import android.provider.CalendarContract
-import android.support.v4.app.ActivityCompat
 import telm.krzeminska.kolodziejczyk.exeminecalendar.model.Event
 
 
@@ -41,14 +38,9 @@ class EventListModel(private val applicationContext: Context) : EventListMVP.Mod
         val selectionArgs = arrayOf("a.t.kolodziejczyk@gmail.com", "a.t.kolodziejczyk.gmail.com", "a.t.kolodziejczyk@gmail.com")
 
         val permissions: Array<String> = arrayOf(Manifest.permission.READ_CALENDAR)
-        if (ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat
-                    .requestPermissions(applicationContext as Activity, permissions, 111)
-        }
 // Submit the query and get a Cursor object back.
-        var cursor: Cursor =
-                applicationContext.contentResolver
-                        .query(uri, EVENT_PROJECTION, CalendarContract.Calendars.VISIBLE + " = 1", null, CalendarContract.Calendars._ID + " ASC")
+        var cursor: Cursor = applicationContext.contentResolver
+                .query(uri, EVENT_PROJECTION, CalendarContract.Calendars.VISIBLE + " = 1", null, CalendarContract.Calendars._ID + " ASC")
         while (cursor.moveToNext()) {
             var calID: Long = 0
             var displayName: String? = null
