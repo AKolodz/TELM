@@ -25,26 +25,27 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
 
         if (ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED)
-            runActivityFunctions()
+            pullEventsList()
         else
             ActivityCompat.requestPermissions(this,
                     arrayOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR),
                     CALENDAR_PERMISSION_REQUESTCODE)
 
-    }
 
-    private fun runActivityFunctions() {
-        val presenter = EventListPresenter(this, applicationContext)
-        presenter.getEvents()
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }
     }
 
+    private fun pullEventsList() {
+        val presenter = EventListPresenter(this, applicationContext)
+        presenter.getEvents()
+    }
+
     override fun showEvents(events: MutableList<Event>) {
         //TODO
-        Toast.makeText(this, "Show!", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, events.size.toString(), Toast.LENGTH_LONG).show()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -55,7 +56,7 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
                     Toast.makeText(this, "Permission must be granted", Toast.LENGTH_SHORT).show()
                     this.finish()
                 } else
-                    runActivityFunctions()
+                    pullEventsList()
         }
     }
 }

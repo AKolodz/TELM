@@ -6,6 +6,10 @@ import android.content.Context
 import android.provider.CalendarContract
 import android.provider.CalendarContract.Calendars
 import telm.krzeminska.kolodziejczyk.exeminecalendar.model.Event
+import telm.krzeminska.kolodziejczyk.exeminecalendar.model.ExaminationEvent
+import telm.krzeminska.kolodziejczyk.exeminecalendar.model.ReminderType
+import java.time.LocalDateTime
+import java.util.*
 
 
 /**
@@ -13,7 +17,8 @@ import telm.krzeminska.kolodziejczyk.exeminecalendar.model.Event
  */
 class EventListModel(private val applicationContext: Context) : EventListMVP.Model {
 
-    var calendarId = -2L
+    private var calendarId = -1L
+    private var eventList = mutableListOf<Event>()
 
     init {
         findCalendarId().apply {
@@ -25,6 +30,7 @@ class EventListModel(private val applicationContext: Context) : EventListMVP.Mod
                         findCalendarId()
                     }
         }
+        addEvent()
     }
 
     @SuppressLint("MissingPermission")
@@ -49,7 +55,7 @@ class EventListModel(private val applicationContext: Context) : EventListMVP.Mod
         while (cursor.moveToNext()) {
             val dispName = cursor.getString(PROJECTION_DISPLAY_NAME_INDEX)
             val accName = cursor.getString(PROJECTION_ACCOUNT_NAME_INDEX)
-            if ( dispName == "MedicalEventsCalendar" && accName == "MedicalEventsCalendar")
+            if (dispName == "MedicalEventsCalendar" && accName == "MedicalEventsCalendar")
                 foundId = cursor.getLong(PROJECTION_ID_INDEX)
         }
         return foundId
@@ -93,8 +99,40 @@ class EventListModel(private val applicationContext: Context) : EventListMVP.Mod
         val uri = applicationContext.contentResolver.insert(builder.build(), values)
     }
 
+    @SuppressLint("MissingPermission")
+    private fun addEvent() {
+        var calID = calendarId
+        var startMillis = 0L
+        var endMillis = 0L
+        var beginTime = Calendar.getInstance()
+        beginTime.set(2012, 9, 14, 7, 30);
+        startMillis = beginTime.timeInMillis
+        var endTime = Calendar.getInstance();
+        endTime.set(2012, 9, 14, 8, 45);
+        endMillis = endTime.timeInMillis;
+
+        var cr = applicationContext.contentResolver
+        var values = ContentValues()
+        values.put(CalendarContract.Events.DTSTART, startMillis);
+        values.put(CalendarContract.Events.DTEND, endMillis);
+        values.put(CalendarContract.Events.TITLE, "Jazzercise");
+        values.put(CalendarContract.Events.DESCRIPTION, "Group workout");
+        values.put(CalendarContract.Events.CALENDAR_ID, calID);
+        values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Berlin");
+        var uri = cr.insert(CalendarContract.Events.CONTENT_URI, values)
+
+// get the event ID that is the last element in the Uri
+        var eventID: Long = uri.lastPathSegment.toLong()
+
+        eventList.add(ExaminationEvent(eventID.toString(),eventID.toString(), Pair(ReminderType.ALARM, mutableListOf(LocalDateTime.MAX))))
+//
+// ... do something with event ID
+//
+//
+    }
+
     override fun getEvents(): MutableList<Event> {
-        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        return mutableListOf()
+        eventList.add(ExaminationEvent("1","1", Pair(ReminderType.ALARM, mutableListOf(LocalDateTime.MAX))))
+        return eventList
     }
 }
