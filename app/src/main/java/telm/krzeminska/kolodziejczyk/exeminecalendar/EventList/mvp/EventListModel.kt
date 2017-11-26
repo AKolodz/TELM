@@ -10,6 +10,9 @@ import telm.krzeminska.kolodziejczyk.exeminecalendar.model.ExaminationEvent
 import telm.krzeminska.kolodziejczyk.exeminecalendar.model.ReminderType
 import java.time.LocalDateTime
 import java.util.*
+import android.widget.TextView
+import android.content.ContentResolver
+import android.database.Cursor
 
 
 /**
@@ -30,7 +33,7 @@ class EventListModel(private val applicationContext: Context) : EventListMVP.Mod
                         findCalendarId()
                     }
         }
-        addEvent()
+        addEvent(ExaminationEvent(name = "ExaminationEvent",description = "Manually added"))
     }
 
     @SuppressLint("MissingPermission")
@@ -100,39 +103,55 @@ class EventListModel(private val applicationContext: Context) : EventListMVP.Mod
     }
 
     @SuppressLint("MissingPermission")
-    private fun addEvent() {
-        var calID = calendarId
+    private fun addEvent(event: Event) {
+        val calID = calendarId
         var startMillis = 0L
         var endMillis = 0L
-        var beginTime = Calendar.getInstance()
+        val beginTime = Calendar.getInstance()
         beginTime.set(2012, 9, 14, 7, 30);
         startMillis = beginTime.timeInMillis
-        var endTime = Calendar.getInstance();
+        val endTime = Calendar.getInstance();
         endTime.set(2012, 9, 14, 8, 45);
         endMillis = endTime.timeInMillis;
 
-        var cr = applicationContext.contentResolver
-        var values = ContentValues()
-        values.put(CalendarContract.Events.DTSTART, startMillis);
-        values.put(CalendarContract.Events.DTEND, endMillis);
-        values.put(CalendarContract.Events.TITLE, "Jazzercise");
-        values.put(CalendarContract.Events.DESCRIPTION, "Group workout");
-        values.put(CalendarContract.Events.CALENDAR_ID, calID);
-        values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Berlin");
-        var uri = cr.insert(CalendarContract.Events.CONTENT_URI, values)
-
+        val cr = applicationContext.contentResolver
+        val values = ContentValues()
+        values.put(CalendarContract.Events.DTSTART, startMillis)
+        values.put(CalendarContract.Events.DTEND, endMillis)
+        values.put(CalendarContract.Events.TITLE, event.name)
+        values.put(CalendarContract.Events.DESCRIPTION, "Group workout")
+        values.put(CalendarContract.Events.CALENDAR_ID, calID)
+        values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Berlin")
+        val uri = cr.insert(CalendarContract.Events.CONTENT_URI, values)
 // get the event ID that is the last element in the Uri
-        var eventID: Long = uri.lastPathSegment.toLong()
-
-        eventList.add(ExaminationEvent(eventID.toString(),eventID.toString(), Pair(ReminderType.ALARM, mutableListOf(LocalDateTime.MAX))))
-//
+//      val eventID: Long = uri.lastPathSegment.toLong()
 // ... do something with event ID
-//
-//
     }
 
+    @SuppressLint("MissingPermission")
     override fun getEvents(): MutableList<Event> {
-        eventList.add(ExaminationEvent("1","1", Pair(ReminderType.ALARM, mutableListOf(LocalDateTime.MAX))))
+        val cr = applicationContext.contentResolver
+
+        //I suppose: things I want to know
+        val mProjection = arrayOf("_id",
+                CalendarContract.Events.TITLE,
+                CalendarContract.Events.EVENT_LOCATION,
+                CalendarContract.Events.DTSTART,
+                CalendarContract.Events.DTEND)
+
+        val uri = CalendarContract.Events.CONTENT_URI
+        //I suppose: query
+        val selection = CalendarContract.Events.CALENDAR_ID + " = ? "
+        //I suppose: query parameters
+        val selectionArgs = arrayOf("$calendarId")
+
+        var cursor: Cursor = cr.query(uri, mProjection, selection, selectionArgs, null)
+
+        while (cursor.moveToNext()) {
+            val name = cursor.getString(cursor.getColumnIndex(CalendarContract.Events.TITLE))
+            TODO("eventList.add()")
+        }
+
         return eventList
     }
 }
