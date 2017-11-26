@@ -12,7 +12,7 @@ class EventListPresenter(private val view: EventListMVP.View, applicationContext
 
     override fun getEvents() {
         model
-                .getEvents()
+                .getAllEvents()
                 .apply {
                     view.showEvents(this)
                 }

@@ -8,7 +8,7 @@ import telm.krzeminska.kolodziejczyk.exeminecalendar.model.Event
 interface EventListMVP {
 
     interface Model {
-        fun getEvents(): MutableList<Event>
+        fun getAllEvents(): MutableList<Event>
     }
 
     interface Presenter {
