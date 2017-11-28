@@ -6,11 +6,15 @@ import android.content.Context
 import android.database.Cursor
 import android.provider.CalendarContract
 import android.provider.CalendarContract.Calendars
+import android.provider.CalendarContract.Events
 import telm.krzeminska.kolodziejczyk.exeminecalendar.model.Event
 import telm.krzeminska.kolodziejczyk.exeminecalendar.model.EventType
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
+import android.provider.SyncStateContract.Helpers.update
+
+
 
 
 /**
@@ -31,7 +35,9 @@ class EventListModel(private val applicationContext: Context) : EventListMVP.Mod
                         findCalendarId()
                     }
         }
-        //saveEvent(Event(null, "Id test", "Test Id", LocalDateTime.now().plusDays(4), eventType = EventType.MEDICAMENT))
+        //saveEvent(Event(null, "To update", "To update", LocalDateTime.now(), eventType = EventType.EXAMINATION))
+        //saveEvent(Event(null, "Duration!","Duration!", LocalDateTime.now(),1,eventType = EventType.MEDICAMENT))
+        deleteEvent(109)
     }
 
     @SuppressLint("MissingPermission")
@@ -67,7 +73,7 @@ class EventListModel(private val applicationContext: Context) : EventListMVP.Mod
         values.put(Calendars.CALENDAR_COLOR, -0x10000)
         values.put(Calendars.CALENDAR_ACCESS_LEVEL, Calendars.CAL_ACCESS_OWNER)
         values.put(Calendars.OWNER_ACCOUNT, "owner.account@googlemail.com")
-        values.put(Calendars.CALENDAR_TIME_ZONE, "Europe/Berlin")
+        values.put(Calendars.CALENDAR_TIME_ZONE, "Europe/Warsaw")
         values.put(Calendars.SYNC_EVENTS, 1)
 
         val builder = CalendarContract.Calendars.CONTENT_URI.buildUpon()
@@ -80,42 +86,86 @@ class EventListModel(private val applicationContext: Context) : EventListMVP.Mod
 
     @SuppressLint("MissingPermission")
     private fun saveEvent(event: Event) {
-        val cr = applicationContext.contentResolver
         val values = ContentValues()
-        val beginTime: Calendar = Calendar.getInstance()
+        val startMillis = Calendar.getInstance()
                 .apply {
                     this.set(
                             event.dateTime.year,
-                            event.dateTime.monthValue,
+                            event.dateTime.monthValue-1,
                             event.dateTime.dayOfMonth,
                             event.dateTime.hour,
                             event.dateTime.minute)
-                }
-        val endTime = Calendar.getInstance()
+                }.timeInMillis
+        val endMillis = Calendar.getInstance()
                 .apply {
                     this.set(
                             event.dateTime.year,
-                            event.dateTime.monthValue,
+                            event.dateTime.monthValue-1,
                             event.dateTime.dayOfMonth,
                             event.dateTime.hour + 1,
                             event.dateTime.minute)
-                }
-
-        val startMillis = beginTime.timeInMillis
-        val endMillis = endTime.timeInMillis
+                }.timeInMillis
 
         values.put(CalendarContract.Events.TITLE, event.name)
         values.put(CalendarContract.Events.DESCRIPTION, event.description)
         values.put(CalendarContract.Events.DTSTART, startMillis)
         values.put(CalendarContract.Events.CALENDAR_ID, calendarId)
-        values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Berlin")
-        if (event.durationDays != null)
-            values.put(CalendarContract.Events.DURATION, "PT${event.durationDays}D")
+        values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Warsaw")
+        if (event.durationDays != null) {
+            values.put(CalendarContract.Events.DURATION, "PT${event.durationDays}H")
+            values.put(Events.RRULE, "FREQ=DAILY;INTERVAL=1;COUNT=7")
+        }
         else
             values.put(CalendarContract.Events.DTEND, endMillis)
 //        if (event.reminders!=null)
 //            //TODO: Add reminder
-        val uri = cr.insert(CalendarContract.Events.CONTENT_URI, values)
+        val uri = applicationContext.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun deleteEvent(id: Long) =
+        applicationContext.contentResolver.delete(Events.CONTENT_URI,
+                Events._ID + " = $id",
+                null)
+
+    @SuppressLint("MissingPermission")
+    private fun updateEvent(updatedId: Long, newEvent: Event) {
+        val values = ContentValues()
+        val startMillis = Calendar.getInstance()
+                .apply {
+                    this.set(
+                            newEvent.dateTime.year,
+                            newEvent.dateTime.monthValue,
+                            newEvent.dateTime.dayOfMonth,
+                            newEvent.dateTime.hour,
+                            newEvent.dateTime.minute)
+                }.timeInMillis
+        val endMillis = Calendar.getInstance()
+                .apply {
+                    this.set(
+                            newEvent.dateTime.year,
+                            newEvent.dateTime.monthValue,
+                            newEvent.dateTime.dayOfMonth,
+                            newEvent.dateTime.hour + 1,
+                            newEvent.dateTime.minute)
+                }.timeInMillis
+
+        values.put(CalendarContract.Events.TITLE, newEvent.name)
+        values.put(CalendarContract.Events.DESCRIPTION, newEvent.description)
+        values.put(CalendarContract.Events.DTSTART, startMillis)
+        values.put(CalendarContract.Events.CALENDAR_ID, calendarId)
+        values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Warsaw")
+        if (newEvent.durationDays != null)
+            values.put(CalendarContract.Events.DURATION, "PT${newEvent.durationDays}D")
+        else
+            values.put(CalendarContract.Events.DTEND, endMillis)
+//        if (event.reminders!=null)
+//            //TODO: Add reminder
+
+        val updated = applicationContext.contentResolver.update(Events.CONTENT_URI,
+                values,
+                Events._ID + " = $updatedId",
+                null)
     }
 
     @SuppressLint("MissingPermission")
@@ -129,7 +179,7 @@ class EventListModel(private val applicationContext: Context) : EventListMVP.Mod
                 CalendarContract.Events.DURATION)
 
         val cursor: Cursor = applicationContext.contentResolver.query(CalendarContract.Events.CONTENT_URI,
-                mProjection,
+                mProjection,                                                                        //what query requests for
                 CalendarContract.Events.CALENDAR_ID + " = ? ",                              //query
                 arrayOf("$calendarId"),                                                             //query values
                 null)
@@ -139,24 +189,23 @@ class EventListModel(private val applicationContext: Context) : EventListMVP.Mod
             val name = cursor.getString(cursor.getColumnIndex(CalendarContract.Events.TITLE))
             val description = cursor.getString(cursor.getColumnIndex(CalendarContract.Events.DESCRIPTION))
             val start = cursor.getString(cursor.getColumnIndex(CalendarContract.Events.DTSTART)).toLong()
-            val end = cursor.getString(cursor.getColumnIndex(CalendarContract.Events.DTEND))
             val duration = cursor.getString(cursor.getColumnIndex(CalendarContract.Events.DURATION))
             val dateTime = toLocalDateTime(start)
 
             if (duration == null) {
                 eventList.add(Event(id, name, description, dateTime, duration, null, EventType.EXAMINATION))
             } else {
-                eventList.add(Event(id, name, description, dateTime, rfcToDaysInt(duration), null, EventType.MEDICAMENT))
+                eventList.add(Event(id, name, description, dateTime, rfcToInt(duration), null, EventType.MEDICAMENT))
             }
         }
         return eventList
     }
 
-    private fun rfcToDaysInt(duration: String): Int =
+    private fun rfcToInt(duration: String): Int =
             duration
                     .removeSuffix("D")
-                    .removeSuffix("H")
                     .removePrefix("PT")
+                    .removeSuffix("H")
                     .toInt()
 
 
@@ -165,6 +214,6 @@ class EventListModel(private val applicationContext: Context) : EventListMVP.Mod
                 .apply {
                     this.timeInMillis = millis
                 }
-        return LocalDateTime.ofInstant(cal.toInstant(), ZoneId.systemDefault())
+        return LocalDateTime.ofInstant(cal.toInstant(), ZoneId.of("Europe/Warsaw"))
     }
 }
