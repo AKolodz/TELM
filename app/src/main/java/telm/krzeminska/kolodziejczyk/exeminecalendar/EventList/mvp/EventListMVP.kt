@@ -9,13 +9,22 @@ interface EventListMVP {
 
     interface Model {
         fun getAllEvents(): MutableList<Event>
+        fun saveEvent(event: Event)
+        fun updateEvent(idToUpdate: Long, newEvent: Event)
+        fun deleteEvent(id: Long)
+
     }
 
     interface Presenter {
-        fun getEvents(): Unit
+        fun getEvents()
+        fun saveEvent(event: Event)
+        fun updateEvent(idToUpdate: Long, newEvent: Event)
+        fun deleteEvent(id: Long)
     }
 
+
     interface View {
-        fun showEvents(events: MutableList<Event>): Unit
+        fun showEvents(events: MutableList<Event>)
+        fun showInfo(message: String)
     }
 }

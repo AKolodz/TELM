@@ -43,6 +43,9 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
         presenter.getEvents()
     }
 
+    override fun showInfo(message: String) =
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+
     override fun showEvents(events: MutableList<Event>) {
         //TODO
         Toast.makeText(this, "Show", Toast.LENGTH_LONG).show()
@@ -60,6 +63,7 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
         }
     }
 }
-//            val intent = Intent(Intent.ACTION_INSERT)
-//            intent.data = CalendarContract.Events.CONTENT_URI
+
 //            startActivity(intent)
+//            intent.data = CalendarContract.Events.CONTENT_URI
+//            val intent = Intent(Intent.ACTION_INSERT)
