@@ -73,4 +73,9 @@ class Converter {
             values.put(CalendarContract.Events.DTEND, endMillis)
         return values
     }
+
+    fun minutesToTimeBeforeEvent(minutes : Int): TimeToEvent {
+        //TODO(" Function needs implementation")
+        return TimeToEvent()
+    }
 }
