@@ -11,8 +11,8 @@ class Event(
         var description: String,
         var dateTime: LocalDateTime,
         var durationDays: Int? = null,
-        var reminders: Pair<ReminderType, MutableList<LocalDateTime>>? = null,
-        var eventType: EventType) {
+        var reminder: Pair<ReminderType, TimeToEvent>? = null,
+        private var eventType: EventType) {
 
     override fun toString(): String =
             when (eventType) {
@@ -20,6 +20,11 @@ class Event(
                 EventType.MEDICAMENT -> ""
             }
 }
+
+data class TimeToEvent(
+        var days: Int = 0,
+        var hours: Int = 0,
+        var minutes: Int = 0)
 
 enum class EventType {
     EXAMINATION,

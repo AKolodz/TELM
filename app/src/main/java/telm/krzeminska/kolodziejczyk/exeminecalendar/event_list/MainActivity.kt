@@ -1,4 +1,4 @@
-package telm.krzeminska.kolodziejczyk.exeminecalendar.EventList
+package telm.krzeminska.kolodziejczyk.exeminecalendar.event_list
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -8,8 +8,8 @@ import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
-import telm.krzeminska.kolodziejczyk.exeminecalendar.EventList.mvp.EventListMVP
-import telm.krzeminska.kolodziejczyk.exeminecalendar.EventList.mvp.EventListPresenter
+import telm.krzeminska.kolodziejczyk.exeminecalendar.event_list.mvp.EventListMVP
+import telm.krzeminska.kolodziejczyk.exeminecalendar.event_list.mvp.EventListPresenter
 import telm.krzeminska.kolodziejczyk.exeminecalendar.R
 import telm.krzeminska.kolodziejczyk.exeminecalendar.model.Event
 

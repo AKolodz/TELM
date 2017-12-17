@@ -1,4 +1,4 @@
-package telm.krzeminska.kolodziejczyk.exeminecalendar.EventList.mvp
+package telm.krzeminska.kolodziejczyk.exeminecalendar.event_list.mvp
 
 import telm.krzeminska.kolodziejczyk.exeminecalendar.model.Event
 

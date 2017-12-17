@@ -5,7 +5,7 @@ package telm.krzeminska.kolodziejczyk.exeminecalendar.model
  */
 enum class ReminderType{
     NONE,
-    VIBRATIONS,
+    MAIL,
     ALARM,
     SMS
 }
