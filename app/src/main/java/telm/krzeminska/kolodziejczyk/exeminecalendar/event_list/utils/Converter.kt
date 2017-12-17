@@ -27,11 +27,9 @@ class Converter {
     fun timeToMinutes(time: TimeToEvent): Int =
             time.days * 24 * 60 + time.hours * 60 + time.minutes
 
-    fun rfcToInt(duration: String): Int =
+    fun rruleToDurationDays(duration: String): Int =
             duration
-                    .removeSuffix("D")
-                    .removePrefix("PT")
-                    .removeSuffix("H")
+                    .substringAfter("COUNT=")
                     .toInt()
 
     fun toLocalDateTime(millis: Long): LocalDateTime {

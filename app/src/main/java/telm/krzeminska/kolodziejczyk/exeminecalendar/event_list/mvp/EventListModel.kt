@@ -138,7 +138,7 @@ class EventListModel(private val applicationContext: Context) : EventListMVP.Mod
                 CalendarContract.Events.DESCRIPTION,
                 CalendarContract.Events.DTSTART,
                 CalendarContract.Events.DTEND,
-                CalendarContract.Events.DURATION)
+                CalendarContract.Events.RRULE)
 
         val cursor: Cursor = applicationContext.contentResolver.query(CalendarContract.Events.CONTENT_URI,
                 mProjection,                                                                        //what query requests for
@@ -151,13 +151,13 @@ class EventListModel(private val applicationContext: Context) : EventListMVP.Mod
             val name = cursor.getString(cursor.getColumnIndex(CalendarContract.Events.TITLE))
             val description = cursor.getString(cursor.getColumnIndex(CalendarContract.Events.DESCRIPTION))
             val start = cursor.getString(cursor.getColumnIndex(CalendarContract.Events.DTSTART)).toLong()
-            val duration = cursor.getString(cursor.getColumnIndex(CalendarContract.Events.DURATION))
+            val rrule = cursor.getString(cursor.getColumnIndex(CalendarContract.Events.RRULE))
             val dateTime = converter.toLocalDateTime(start)
 
-            if (duration == null) {
-                eventList.add(Event(id, name, description, dateTime, duration, null, EventType.EXAMINATION))
+            if (rrule == null) {
+                eventList.add(Event(id, name, description, dateTime, null, null, EventType.EXAMINATION))
             } else {
-                eventList.add(Event(id, name, description, dateTime, converter.rfcToInt(duration), null, EventType.MEDICAMENT))
+                eventList.add(Event(id, name, description, dateTime, converter.rruleToDurationDays(rrule), null, EventType.MEDICAMENT))
             }
         }
         return eventList
