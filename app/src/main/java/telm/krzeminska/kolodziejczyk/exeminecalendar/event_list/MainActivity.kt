@@ -64,7 +64,6 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
 
     override fun showEvents(events: MutableList<Event>) {
         //TODO
-        Toast.makeText(this, "Show", Toast.LENGTH_LONG).show()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
