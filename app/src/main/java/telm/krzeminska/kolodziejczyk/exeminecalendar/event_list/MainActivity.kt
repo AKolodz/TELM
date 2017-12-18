@@ -1,16 +1,18 @@
 package telm.krzeminska.kolodziejczyk.exeminecalendar.event_list
 
 import android.Manifest
+import android.content.ContentUris
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.support.design.widget.Snackbar
+import android.provider.CalendarContract
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
+import telm.krzeminska.kolodziejczyk.exeminecalendar.R
 import telm.krzeminska.kolodziejczyk.exeminecalendar.event_list.mvp.EventListMVP
 import telm.krzeminska.kolodziejczyk.exeminecalendar.event_list.mvp.EventListPresenter
-import telm.krzeminska.kolodziejczyk.exeminecalendar.R
 import telm.krzeminska.kolodziejczyk.exeminecalendar.model.Event
 
 
@@ -32,11 +34,25 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
                     CALENDAR_PERMISSION_REQUESTCODE)
 
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+        fab.setOnClickListener {
+            //            showEventInCalendar(139)
+            showInCalendar()
         }
     }
+
+    private fun showEventInCalendar(eventId: Long): Unit =
+            ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
+                    .run {
+                        Intent(Intent.ACTION_VIEW).setData(this)
+                                .run { startActivity(this) }
+                    }
+
+    private fun showInCalendar(): Unit =
+            CalendarContract.CONTENT_URI.buildUpon()
+                    .appendPath("time")
+                    .apply { ContentUris.appendId(this, 0) }
+                    .run { Intent(Intent.ACTION_VIEW).setData(this.build()) }
+                    .run { startActivity(this) }
 
     private fun pullEventsList() {
         val presenter = EventListPresenter(this, applicationContext)
@@ -63,7 +79,3 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
         }
     }
 }
-
-//            startActivity(intent)
-//            intent.data = CalendarContract.Events.CONTENT_URI
-//            val intent = Intent(Intent.ACTION_INSERT)

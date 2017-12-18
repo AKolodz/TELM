@@ -33,9 +33,9 @@ class EventListModel(private val applicationContext: Context) : EventListMVP.Mod
                         findCalendarId()
                     }
         }
-        //saveEvent(Event(null, "Test Event", "Test event", LocalDateTime.now().plusMinutes(6), null, Pair(ReminderType.ALARM, TimeToEvent(minutes = 5)) , EventType.EXAMINATION))
+        //saveEvent(Event(null, "Test Event", "Test event", LocalDateTime.now(), null, Pair(ReminderType.ALARM, TimeToEvent(minutes = 5)) , EventType.EXAMINATION))
         //saveEvent(Event(null, "NEW!", "NEW!", LocalDateTime.now(), 3, Pair(ReminderType.ALARM, TimeToEvent(minutes = 5)), EventType.MEDICAMENT))
-//        deleteEvent(138)
+//        deleteEvent(140)
         //updateEvent(137, Event(null, "Updated", "UPDATED", LocalDateTime.now().plusMinutes(6), null,Pair(ReminderType.ALARM, TimeToEvent(minutes = 5)), EventType.EXAMINATION))
     }
 
