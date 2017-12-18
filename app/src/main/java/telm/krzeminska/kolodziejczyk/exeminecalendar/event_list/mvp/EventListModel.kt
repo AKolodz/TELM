@@ -11,6 +11,7 @@ import telm.krzeminska.kolodziejczyk.exeminecalendar.model.Event
 import telm.krzeminska.kolodziejczyk.exeminecalendar.model.EventType
 import telm.krzeminska.kolodziejczyk.exeminecalendar.model.ReminderType
 import telm.krzeminska.kolodziejczyk.exeminecalendar.model.TimeToEvent
+import java.time.LocalDateTime
 
 
 /**
@@ -32,10 +33,10 @@ class EventListModel(private val applicationContext: Context) : EventListMVP.Mod
                         findCalendarId()
                     }
         }
-        //saveEvent(Event(null, "To update", "To update", LocalDateTime.now().plusMinutes(16), null, Pair(ReminderType.ALARM, TimeToEvent(minutes = 15)) , EventType.EXAMINATION))
-        //saveEvent(Event(null, "NEW!", "NEW!", LocalDateTime.now(), 5, eventType = EventType.MEDICAMENT))
-        //deleteEvent(105)
-        //updateEvent(104, Event(null, "NEW UPDATE", "UPDATED", LocalDateTime.now(), eventType = EventType.EXAMINATION))
+        //saveEvent(Event(null, "Test Event", "Test event", LocalDateTime.now().plusMinutes(6), null, Pair(ReminderType.ALARM, TimeToEvent(minutes = 5)) , EventType.EXAMINATION))
+        //saveEvent(Event(null, "NEW!", "NEW!", LocalDateTime.now(), 3, Pair(ReminderType.ALARM, TimeToEvent(minutes = 5)), EventType.MEDICAMENT))
+//        deleteEvent(138)
+        //updateEvent(137, Event(null, "Updated", "UPDATED", LocalDateTime.now().plusMinutes(6), null,Pair(ReminderType.ALARM, TimeToEvent(minutes = 5)), EventType.EXAMINATION))
     }
 
     @SuppressLint("MissingPermission")
@@ -103,9 +104,17 @@ class EventListModel(private val applicationContext: Context) : EventListMVP.Mod
                             Events._ID + " = $idToUpdate",
                             null)
                             .apply {
-                                setReminders(newEvent.id, newEvent.reminder)
+                                deleteReminders(idToUpdate)
+                                setReminders(idToUpdate, newEvent.reminder)
                             }
                 }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun deleteReminders(idToUpdate: Long) {
+        applicationContext.contentResolver.delete(Reminders.CONTENT_URI,
+                Reminders.EVENT_ID + " = $idToUpdate",
+                null)
     }
 
     @SuppressLint("MissingPermission")
