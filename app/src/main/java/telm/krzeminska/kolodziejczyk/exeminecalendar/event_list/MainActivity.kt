@@ -69,13 +69,13 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
         if (item.title == "Edit") Toast.makeText(applicationContext, "Edit Clicked", Toast.LENGTH_LONG).show();
         if (item.title == "Delete") {
             val dialogBox = AlertDialog.Builder(this).create()
-            dialogBox.setTitle("Are you sure ");
-            dialogBox.setButton(AlertDialog.BUTTON_POSITIVE, "Examination", { _, i ->
-                Toast.makeText(applicationContext, "Examination", Toast.LENGTH_LONG).show()
-                showCustomDialog()
+            dialogBox.setTitle("Are you sure you want to delete this event?");
+            dialogBox.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", { _, i ->
+                Toast.makeText(applicationContext, "Yes", Toast.LENGTH_LONG).show()
+
             })
-            dialogBox.setButton(AlertDialog.BUTTON_NEUTRAL, "Medicaments", { _, i ->
-                Toast.makeText(applicationContext, "Medicaments", Toast.LENGTH_LONG).show()
+            dialogBox.setButton(AlertDialog.BUTTON_NEUTRAL, "No", { _, i ->
+                Toast.makeText(applicationContext, "No", Toast.LENGTH_LONG).show()
 
             })
             dialogBox.show()
@@ -83,13 +83,6 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
         return true;
     }
 
-    private fun showCustomDialog() {
-        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        var dialogCustomBox=AlertDialog.Builder(this)
-        val inflater = this.layoutInflater
-        val dialogView = inflater.inflate(R.layout.examination_custom_layout, null)
-        dialogCustomBox.setView(dialogView).show()
-    }
 
     private fun pullEventsList() {
         val presenter = EventListPresenter(this, applicationContext)
