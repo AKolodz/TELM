@@ -2,12 +2,13 @@ package telm.krzeminska.kolodziejczyk.exeminecalendar.event_list
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
-import android.support.annotation.RequiresApi
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
+import android.view.ContextMenu
+import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -22,7 +23,7 @@ import java.time.LocalDateTime
 class MainActivity : AppCompatActivity(), EventListMVP.View {
 
     private val CALENDAR_PERMISSION_REQUESTCODE = 1
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -43,10 +44,31 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
                     arrayOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR),
                     CALENDAR_PERMISSION_REQUESTCODE)
 
+
+        eventList.setOnItemClickListener { adapterView, view, i, l ->
+            Toast.makeText(this, "Item $i", Toast.LENGTH_SHORT).show()
+        }
+
+        registerForContextMenu(eventList)
+
+
+
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }
+    }
+
+    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo) {
+        menu.add(0, v.id, 0, "Edit");
+        menu.add(0, v.id, 0, "Delete");
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        if (item.title == "Edit") Toast.makeText(applicationContext, "Edit Clicked", Toast.LENGTH_LONG).show();
+        if (item.title == "Delete") Toast.makeText(
+                applicationContext, "Delete Clicked", Toast.LENGTH_LONG).show();
+        return true;
     }
 
     private fun pullEventsList() {
