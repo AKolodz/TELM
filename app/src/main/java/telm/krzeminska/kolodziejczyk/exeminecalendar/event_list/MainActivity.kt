@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.ContextMenu
 import android.view.MenuItem
@@ -66,9 +67,28 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         if (item.title == "Edit") Toast.makeText(applicationContext, "Edit Clicked", Toast.LENGTH_LONG).show();
-        if (item.title == "Delete") Toast.makeText(
-                applicationContext, "Delete Clicked", Toast.LENGTH_LONG).show();
+        if (item.title == "Delete") {
+            val dialogBox = AlertDialog.Builder(this).create()
+            dialogBox.setTitle("Are you sure ");
+            dialogBox.setButton(AlertDialog.BUTTON_POSITIVE, "Examination", { _, i ->
+                Toast.makeText(applicationContext, "Examination", Toast.LENGTH_LONG).show()
+                showCustomDialog()
+            })
+            dialogBox.setButton(AlertDialog.BUTTON_NEUTRAL, "Medicaments", { _, i ->
+                Toast.makeText(applicationContext, "Medicaments", Toast.LENGTH_LONG).show()
+
+            })
+            dialogBox.show()
+        }
         return true;
+    }
+
+    private fun showCustomDialog() {
+        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        var dialogCustomBox=AlertDialog.Builder(this)
+        val inflater = this.layoutInflater
+        val dialogView = inflater.inflate(R.layout.examination_custom_layout, null)
+        dialogCustomBox.setView(dialogView).show()
     }
 
     private fun pullEventsList() {
