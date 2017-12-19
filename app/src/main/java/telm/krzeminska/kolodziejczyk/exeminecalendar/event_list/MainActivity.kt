@@ -54,10 +54,33 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
 
 
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+        fab.setOnClickListener {
+            val dialogBox = AlertDialog.Builder(this).create()
+            dialogBox.setTitle("Select the event you want to add");
+            dialogBox.setButton(AlertDialog.BUTTON_POSITIVE, "Examination", { _, i ->
+                Toast.makeText(applicationContext, "Examination", Toast.LENGTH_LONG).show()
+                showExaminationDialog()
+            })
+            dialogBox.setButton(AlertDialog.BUTTON_NEUTRAL, "Medicaments", { _, i ->
+                Toast.makeText(applicationContext, "Medicaments", Toast.LENGTH_LONG).show()
+                showMedicamentDialog()
+            })
+            dialogBox.show()
         }
+    }
+
+    private fun showExaminationDialog() {
+        var dialogCustomBox=AlertDialog.Builder(this)
+        val inflater = this.layoutInflater
+        val dialogView = inflater.inflate(R.layout.examination_custom_layout, null)
+        dialogCustomBox.setView(dialogView).show()
+    }
+
+    private fun showMedicamentDialog() {
+        var dialogCustomBox=AlertDialog.Builder(this)
+        val inflater = this.layoutInflater
+        val dialogView = inflater.inflate(R.layout.medicament_custom_layout, null)
+        dialogCustomBox.setView(dialogView).show()
     }
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo) {
