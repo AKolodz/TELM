@@ -11,6 +11,28 @@
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_weight="0"
         android:id="@+id/eventList" />
+
+    <RelativeLayout
+        android:id="@+id/RelativeLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" >
+
+    <Button
+        android:id="@+id/show_calendar_button"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18dp"
+        android:text="   Show events in calendar   ">
+
+    </Button>
+
+    </RelativeLayout>
+
+
 
 </android.support.constraint.ConstraintLayout>

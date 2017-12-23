@@ -52,7 +52,9 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
 
         registerForContextMenu(eventList)
 
-
+        show_calendar_button.setOnClickListener{
+            Toast.makeText(this,"CALENDAR",Toast.LENGTH_SHORT).show()
+        }
 
         fab.setOnClickListener {
             val dialogBox = AlertDialog.Builder(this).create()
