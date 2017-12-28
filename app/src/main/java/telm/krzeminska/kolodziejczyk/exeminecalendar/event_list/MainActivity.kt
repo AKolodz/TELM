@@ -85,22 +85,22 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
     }
 
     private fun showMedicamentDialog() {
-        var dialogCustomBox = AlertDialog.Builder(this)
+        val dialogCustomBox = AlertDialog.Builder(this)
         val inflater = this.layoutInflater
         val dialogView = inflater.inflate(R.layout.medicament_custom_layout, null)
         dialogCustomBox.setView(dialogView).show()
     }
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo) {
-        menu.add(0, v.id, 0, "Edit");
+        menu.add(0, v.id, 0, "Show in calendar");
         menu.add(0, v.id, 0, "Delete");
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         val info: AdapterView.AdapterContextMenuInfo = item.menuInfo as AdapterView.AdapterContextMenuInfo
         val id = events[info.position].id
-        if (item.title == "Edit")
-            Toast.makeText(applicationContext, "Edit Clicked", Toast.LENGTH_LONG).show()
+        if (item.title == "Show in calendar")
+            showEventInCalendar(id ?: throw IllegalArgumentException("Event ID can't be null"))
         else if (item.title == "Delete") {
             val dialogBox = AlertDialog.Builder(this).create()
             dialogBox.setTitle("Are you sure you want to delete this event?")
