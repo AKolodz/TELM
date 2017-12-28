@@ -1,9 +1,11 @@
 package telm.krzeminska.kolodziejczyk.exeminecalendar.event_list
 
 import android.Manifest
+import android.content.ContentUris
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.support.design.widget.Snackbar
+import android.provider.CalendarContract
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -44,8 +46,7 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
             ActivityCompat.requestPermissions(this,
                     arrayOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR),
                     CALENDAR_PERMISSION_REQUESTCODE)
-
-
+      
         eventList.setOnItemClickListener { adapterView, view, i, l ->
             Toast.makeText(this, "Item $i", Toast.LENGTH_SHORT).show()
         }
@@ -108,6 +109,19 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
         return true;
     }
 
+    private fun showEventInCalendar(eventId: Long): Unit =
+            ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
+                    .run {
+                        Intent(Intent.ACTION_VIEW).setData(this)
+                                .run { startActivity(this) }
+                    }
+
+    private fun showInCalendar(): Unit =
+            CalendarContract.CONTENT_URI.buildUpon()
+                    .appendPath("time")
+                    .apply { ContentUris.appendId(this, 0) }
+                    .run { Intent(Intent.ACTION_VIEW).setData(this.build()) }
+                    .run { startActivity(this) }
 
     private fun pullEventsList() {
         val presenter = EventListPresenter(this, applicationContext)
@@ -119,7 +133,6 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
 
     override fun showEvents(events: MutableList<Event>) {
         //TODO
-        Toast.makeText(this, "Show", Toast.LENGTH_LONG).show()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -134,7 +147,3 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
         }
     }
 }
-
-//            startActivity(intent)
-//            intent.data = CalendarContract.Events.CONTENT_URI
-//            val intent = Intent(Intent.ACTION_INSERT)

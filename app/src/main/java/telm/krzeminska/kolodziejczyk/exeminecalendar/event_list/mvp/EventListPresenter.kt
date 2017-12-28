@@ -38,6 +38,7 @@ class EventListPresenter(private val view: EventListMVP.View, applicationContext
         model
                 .getAllEvents()
                 .apply {
+                    view.showInfo("Events loaded")
                     view.showEvents(this)
                 }
     }

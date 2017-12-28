@@ -32,10 +32,10 @@ class EventListModel(private val applicationContext: Context) : EventListMVP.Mod
                         findCalendarId()
                     }
         }
-        //saveEvent(Event(null, "To update", "To update", LocalDateTime.now(), eventType = EventType.EXAMINATION))
-        //saveEvent(Event(null, "NEW!", "NEW!", LocalDateTime.now(), 5, eventType = EventType.MEDICAMENT))
-        //deleteEvent(112)
-        //updateEvent(104, Event(null, "NEW UPDATE", "UPDATED", LocalDateTime.now(), eventType = EventType.EXAMINATION))
+//        saveEvent(Event(null, "Test Event", "Test event", LocalDateTime.now(), null, Pair(ReminderType.ALARM, TimeToEvent(minutes = 5)) , EventType.EXAMINATION))
+//        saveEvent(Event(null, "NEW!", "NEW!", LocalDateTime.now(), 3, Pair(ReminderType.ALARM, TimeToEvent(minutes = 5)), EventType.MEDICAMENT))
+//        deleteEvent(140)
+//        updateEvent(137, Event(null, "Updated", "UPDATED", LocalDateTime.now().plusMinutes(6), null,Pair(ReminderType.ALARM, TimeToEvent(minutes = 5)), EventType.EXAMINATION))
     }
 
     @SuppressLint("MissingPermission")
@@ -103,9 +103,17 @@ class EventListModel(private val applicationContext: Context) : EventListMVP.Mod
                             Events._ID + " = $idToUpdate",
                             null)
                             .apply {
-                                setReminders(newEvent.id, newEvent.reminder)
+                                deleteReminders(idToUpdate)
+                                setReminders(idToUpdate, newEvent.reminder)
                             }
                 }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun deleteReminders(idToUpdate: Long) {
+        applicationContext.contentResolver.delete(Reminders.CONTENT_URI,
+                Reminders.EVENT_ID + " = $idToUpdate",
+                null)
     }
 
     @SuppressLint("MissingPermission")
@@ -153,13 +161,49 @@ class EventListModel(private val applicationContext: Context) : EventListMVP.Mod
             val start = cursor.getString(cursor.getColumnIndex(CalendarContract.Events.DTSTART)).toLong()
             val rrule = cursor.getString(cursor.getColumnIndex(CalendarContract.Events.RRULE))
             val dateTime = converter.toLocalDateTime(start)
+            val reminder = getReminders(id)
 
             if (rrule == null) {
-                eventList.add(Event(id, name, description, dateTime, null, null, EventType.EXAMINATION))
+                eventList.add(Event(id, name, description, dateTime, null, reminder, EventType.EXAMINATION))
             } else {
-                eventList.add(Event(id, name, description, dateTime, converter.rruleToDurationDays(rrule), null, EventType.MEDICAMENT))
+                eventList.add(Event(id, name, description, dateTime, converter.rruleToDurationDays(rrule), reminder, EventType.MEDICAMENT))
             }
         }
         return eventList
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getReminders(eventId: Long): Pair<ReminderType, TimeToEvent> {
+        val types = mapOf(
+                "1" to ReminderType.ALARM,
+                "2" to ReminderType.MAIL,
+                "3" to ReminderType.SMS
+        )
+        var type = ReminderType.NONE
+        var timeToEvent = TimeToEvent()
+        val mProjection = arrayOf(
+                CalendarContract.Reminders.METHOD,
+                CalendarContract.Reminders.MINUTES)
+
+        val cursor: Cursor = applicationContext.contentResolver.query(CalendarContract.Reminders.CONTENT_URI,
+                mProjection,
+                CalendarContract.Reminders.EVENT_ID + " = ? ",
+                arrayOf("$eventId"),
+                null)
+
+        while (cursor.moveToNext()) {
+            type = cursor.getString(cursor.getColumnIndex(CalendarContract.Reminders.METHOD))
+                    .run {
+                        types[this] ?: ReminderType.NONE
+                    }
+            timeToEvent = cursor.getString(cursor.getColumnIndex(CalendarContract.Reminders.MINUTES)).toInt()
+                    .run {
+                        val days = (this / (24 * 60)) //round it down
+                        val hours = (this.rem(24 * 60) / 60)
+                        val minutes = (this.rem(24 * 60)).rem(60)
+                        TimeToEvent(days, hours, minutes)
+                    }
+        }
+        return Pair(type, timeToEvent)
     }
 }
