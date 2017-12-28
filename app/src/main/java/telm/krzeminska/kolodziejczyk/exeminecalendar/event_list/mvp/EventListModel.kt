@@ -11,6 +11,7 @@ import telm.krzeminska.kolodziejczyk.exeminecalendar.model.Event
 import telm.krzeminska.kolodziejczyk.exeminecalendar.model.EventType
 import telm.krzeminska.kolodziejczyk.exeminecalendar.model.ReminderType
 import telm.krzeminska.kolodziejczyk.exeminecalendar.model.TimeToEvent
+import java.time.LocalDateTime
 
 
 /**
@@ -140,6 +141,7 @@ class EventListModel(private val applicationContext: Context) : EventListMVP.Mod
 
     @SuppressLint("MissingPermission")
     override fun getAllEvents(): MutableList<Event> {
+        eventList.clear()
         val mProjection = arrayOf(
                 CalendarContract.Events._ID,
                 CalendarContract.Events.TITLE,

@@ -12,6 +12,9 @@ import android.support.v7.app.AppCompatActivity
 import android.view.ContextMenu
 import android.view.MenuItem
 import android.view.View
+import android.widget.AdapterView
+import android.widget.BaseAdapter
+import android.widget.ListView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -26,35 +29,37 @@ import java.time.LocalDateTime
 class MainActivity : AppCompatActivity(), EventListMVP.View {
 
     private val CALENDAR_PERMISSION_REQUESTCODE = 1
+    private var events = mutableListOf<Event>()
+    private lateinit var eventListView: ListView
+    private lateinit var presenter: EventListPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        setSupportActionBar(toolbar)
-
-        var eventList = eventList
-        val events: MutableList<Event> = mutableListOf(Event(1, "First",
-                "First description", LocalDateTime.now(), eventType = EventType.EXAMINATION),
-                Event(2, "Second", "Second descrption", LocalDateTime.now(), 5, eventType = EventType.MEDICAMENT))
-        val adapter = EventAdapter(this, R.layout.rowlayout, events)
-        eventList.adapter = adapter
 
         if (ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED)
+                && ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
+            initViews()
             pullEventsList()
-        else
+        } else
             ActivityCompat.requestPermissions(this,
                     arrayOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR),
                     CALENDAR_PERMISSION_REQUESTCODE)
-      
-        eventList.setOnItemClickListener { adapterView, view, i, l ->
+
+    }
+
+    private fun initViews() {
+        eventListView = eventList
+        val adapter = EventAdapter(this, R.layout.rowlayout, events)
+        eventListView.adapter = adapter
+        eventListView.setOnItemClickListener { adapterView, view, i, l ->
             Toast.makeText(this, "Item $i", Toast.LENGTH_SHORT).show()
         }
 
-        registerForContextMenu(eventList)
+        registerForContextMenu(eventListView)
 
-        show_calendar_button.setOnClickListener{
-            Toast.makeText(this,"CALENDAR",Toast.LENGTH_SHORT).show()
+        show_calendar_button.setOnClickListener {
+            showInCalendar()
         }
 
         fab.setOnClickListener {
@@ -73,14 +78,14 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
     }
 
     private fun showExaminationDialog() {
-        var dialogCustomBox=AlertDialog.Builder(this)
+        val dialogCustomBox = AlertDialog.Builder(this)
         val inflater = this.layoutInflater
         val dialogView = inflater.inflate(R.layout.examination_custom_layout, null)
         dialogCustomBox.setView(dialogView).show()
     }
 
     private fun showMedicamentDialog() {
-        var dialogCustomBox=AlertDialog.Builder(this)
+        var dialogCustomBox = AlertDialog.Builder(this)
         val inflater = this.layoutInflater
         val dialogView = inflater.inflate(R.layout.medicament_custom_layout, null)
         dialogCustomBox.setView(dialogView).show()
@@ -92,13 +97,16 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        if (item.title == "Edit") Toast.makeText(applicationContext, "Edit Clicked", Toast.LENGTH_LONG).show();
-        if (item.title == "Delete") {
+        val info: AdapterView.AdapterContextMenuInfo = item.menuInfo as AdapterView.AdapterContextMenuInfo
+        val id = events[info.position].id
+        if (item.title == "Edit")
+            Toast.makeText(applicationContext, "Edit Clicked", Toast.LENGTH_LONG).show()
+        else if (item.title == "Delete") {
             val dialogBox = AlertDialog.Builder(this).create()
-            dialogBox.setTitle("Are you sure you want to delete this event?");
+            dialogBox.setTitle("Are you sure you want to delete this event?")
             dialogBox.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", { _, i ->
-                Toast.makeText(applicationContext, "Yes", Toast.LENGTH_LONG).show()
-
+                presenter.deleteEvent(id ?: throw IllegalArgumentException("Event ID can't be null"))
+                        .apply { presenter.getEvents() }
             })
             dialogBox.setButton(AlertDialog.BUTTON_NEUTRAL, "No", { _, i ->
                 Toast.makeText(applicationContext, "No", Toast.LENGTH_LONG).show()
@@ -106,7 +114,7 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
             })
             dialogBox.show()
         }
-        return true;
+        return true
     }
 
     private fun showEventInCalendar(eventId: Long): Unit =
@@ -124,15 +132,20 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
                     .run { startActivity(this) }
 
     private fun pullEventsList() {
-        val presenter = EventListPresenter(this, applicationContext)
+        presenter = EventListPresenter(this, applicationContext)
         presenter.getEvents()
     }
 
     override fun showInfo(message: String) =
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 
-    override fun showEvents(events: MutableList<Event>) {
-        //TODO
+    override fun showEvents(dbEvents: MutableList<Event>) {
+        events = dbEvents
+        (eventListView.adapter as EventAdapter).apply {
+            this.clear()
+            this.addAll(events)
+        }
+        ((eventListView.adapter) as BaseAdapter).notifyDataSetChanged()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -142,8 +155,11 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
                 if (grantResults.isNotEmpty() && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "Permission must be granted", Toast.LENGTH_SHORT).show()
                     this.finish()
-                } else
+                } else {
+                    initViews()
                     pullEventsList()
+                }
+
         }
     }
 }
