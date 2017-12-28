@@ -18,11 +18,14 @@ import android.widget.ListView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.examination_custom_layout.view.*
 import telm.krzeminska.kolodziejczyk.exeminecalendar.R
 import telm.krzeminska.kolodziejczyk.exeminecalendar.event_list.mvp.EventListMVP
 import telm.krzeminska.kolodziejczyk.exeminecalendar.event_list.mvp.EventListPresenter
 import telm.krzeminska.kolodziejczyk.exeminecalendar.model.Event
 import telm.krzeminska.kolodziejczyk.exeminecalendar.model.EventType
+import telm.krzeminska.kolodziejczyk.exeminecalendar.model.ReminderType
+import telm.krzeminska.kolodziejczyk.exeminecalendar.model.TimeToEvent
 import java.time.LocalDateTime
 
 
@@ -81,6 +84,33 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
         val dialogCustomBox = AlertDialog.Builder(this)
         val inflater = this.layoutInflater
         val dialogView = inflater.inflate(R.layout.examination_custom_layout, null)
+
+        dialogView.examination_save_bt.setOnClickListener({
+            val name = dialogView.examination_name_et.text.toString()
+            val description = dialogView.examination_place_et.text.toString()
+            val dateTime: LocalDateTime = LocalDateTime.of(
+                    dialogView.examination_year_et.text.toString().toInt(),
+                    dialogView.examination_month_et.text.toString().toInt(),
+                    dialogView.examination_day_et.text.toString().toInt(),
+                    dialogView.examination_time_et.text.toString().substringBefore(":").toInt(),
+                    dialogView.examination_time_et.text.toString().substringAfter(":").toInt()
+            )
+            val timeToEvent = TimeToEvent()
+            val reminder =
+                    when {
+                        dialogView.examination_alarm_cb.isChecked -> Pair(ReminderType.ALARM, timeToEvent)
+                        dialogView.examination_email_cb.isChecked -> Pair(ReminderType.MAIL, timeToEvent)
+                        dialogView.examination_sms_cb.isChecked -> Pair(ReminderType.SMS, timeToEvent)
+                        else -> Pair(ReminderType.NONE, timeToEvent)
+                    }
+            val eventToSave = Event(null, name, description, dateTime, null, reminder, EventType.EXAMINATION)
+            presenter.saveEvent(eventToSave)
+        })
+
+        dialogView.examination_back_bt.setOnClickListener({
+            Toast.makeText(this, "I'm redundant", Toast.LENGTH_SHORT).show()
+        })
+        dialogCustomBox.setNegativeButton("Cancel", { dialogInterface, i -> dialogInterface.dismiss() })
         dialogCustomBox.setView(dialogView).show()
     }
 
