@@ -4,29 +4,20 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:layout_marginBottom="8dp"
-        android:text="Medicament name" />
 
     <EditText
         android:id="@+id/medicament_name_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="8dp"
         android:hint="Medicament name" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="Dose" />
 
     <EditText
         android:id="@+id/medicament_dose_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="8dp"
         android:hint="Dose" />
 
     <TextView
@@ -54,12 +45,12 @@
             android:text="alarm" />
 
         <CheckBox
-            android:id="@+id/medicament_vibrations_cb"
+            android:id="@+id/medicament_none_cb"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="50dp"
+            android:layout_marginBottom="30dp"
             android:layout_marginLeft="40dp"
-            android:text="vibrations" />
+            android:text="none" />
 
         </LinearLayout>
 
@@ -78,13 +69,97 @@
                 android:id="@+id/medicament_sms_cb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="50dp"
+                android:layout_marginBottom="30dp"
                 android:layout_marginLeft="40dp"
                 android:text="sms" />
 
         </LinearLayout>
 
     </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date and time"
+        android:layout_marginLeft="16dp"
+        android:textSize="16dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/examination_day_et"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:hint="DD"
+            android:inputType="number"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/" />
+
+        <EditText
+            android:id="@+id/examination_month_et"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="MM"
+            android:inputType="number"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/"/>
+
+        <EditText
+            android:id="@+id/examination_year_et"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="YYYY"
+            android:inputType="number"
+            android:layout_marginBottom="20dp"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="time"
+            android:layout_marginLeft="30dp"
+            android:hint="HH:MM"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Duration"
+            android:layout_marginLeft="16dp"
+            android:textSize="16dp" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:layout_marginLeft="12dp"
+            android:hint="00"
+            android:textSize="20sp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:text="days"/>
+    </LinearLayout>
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
