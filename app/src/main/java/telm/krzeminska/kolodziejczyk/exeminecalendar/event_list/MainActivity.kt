@@ -19,6 +19,7 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.examination_custom_layout.view.*
+import kotlinx.android.synthetic.main.medicament_custom_layout.view.*
 import telm.krzeminska.kolodziejczyk.exeminecalendar.R
 import telm.krzeminska.kolodziejczyk.exeminecalendar.event_list.mvp.EventListMVP
 import telm.krzeminska.kolodziejczyk.exeminecalendar.event_list.mvp.EventListPresenter
@@ -95,7 +96,26 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
                     dialogView.examination_time_et.text.toString().substringBefore(":").toInt(),
                     dialogView.examination_time_et.text.toString().substringAfter(":").toInt()
             )
-            val timeToEvent = TimeToEvent()
+
+            val days: Int = dialogView.examination_days_before_et.text.toString().let {
+                if (it.isEmpty())
+                    0
+                else
+                    it.toInt()
+            }
+            val hours = dialogView.examination_hours_before_et.text.toString().let {
+                if (it.isEmpty())
+                    0
+                else
+                    it.toInt()
+            }
+            val minutes = dialogView.examination_minutes_before_et.text.toString().let {
+                if (it.isEmpty())
+                    0
+                else
+                    it.toInt()
+            }
+            val timeToEvent = TimeToEvent(days, hours, minutes)
             val reminder =
                     when {
                         dialogView.examination_alarm_cb.isChecked -> Pair(ReminderType.ALARM, timeToEvent)
@@ -118,6 +138,37 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
         val dialogCustomBox = AlertDialog.Builder(this)
         val inflater = this.layoutInflater
         val dialogView = inflater.inflate(R.layout.medicament_custom_layout, null)
+
+        dialogView.medicament_save_bt.setOnClickListener({
+            val name = dialogView.medicament_name_et.text.toString()
+            val description = dialogView.medicament_dose_et.text.toString()
+            val dateTime: LocalDateTime = LocalDateTime.of(
+                    dialogView.medicament_year_et.text.toString().toInt(),
+                    dialogView.medicament_month_et.text.toString().toInt(),
+                    dialogView.medicament_day_et.text.toString().toInt(),
+                    dialogView.medicament_time_et.text.toString().substringBefore(":").toInt(),
+                    dialogView.medicament_time_et.text.toString().substringAfter(":").toInt()
+            )
+            val hours = dialogView.medicament_hours_before_et.text.toString().toInt()
+            val minutes = dialogView.medicament_minutes_before_et.text.toString().toInt()
+            val timeToEvent = TimeToEvent(0, hours, minutes)
+            val reminder =
+                    when {
+                        dialogView.medicament_alarm_cb.isChecked -> Pair(ReminderType.ALARM, timeToEvent)
+                        dialogView.medicament_email_cb.isChecked -> Pair(ReminderType.MAIL, timeToEvent)
+                        dialogView.medicament_sms_cb.isChecked -> Pair(ReminderType.SMS, timeToEvent)
+                        else -> Pair(ReminderType.NONE, timeToEvent)
+                    }
+            val durationDays = dialogView.medicament_duration_et.text.toString().toInt()
+
+
+            val eventToSave = Event(null, name, description, dateTime, durationDays, reminder, EventType.MEDICAMENT)
+            presenter.saveEvent(eventToSave)
+        })
+        dialogView.medicament_back_bt.setOnClickListener({
+            Toast.makeText(this, "I'm redundant", Toast.LENGTH_SHORT).show()
+        })
+        dialogCustomBox.setNegativeButton("Cancel", { dialogInterface, i -> dialogInterface.dismiss() })
         dialogCustomBox.setView(dialogView).show()
     }
 

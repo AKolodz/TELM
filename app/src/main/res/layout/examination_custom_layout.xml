@@ -52,7 +52,7 @@
                 android:id="@+id/examination_none_cb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="50dp"
+                android:layout_marginBottom="20dp"
                 android:layout_marginLeft="40dp"
                 android:text="none" />
 
@@ -73,7 +73,7 @@
                 android:id="@+id/examination_sms_cb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="50dp"
+                android:layout_marginBottom="20dp"
                 android:layout_marginLeft="40dp"
                 android:text="sms" />
 
@@ -133,6 +133,62 @@
             android:inputType="time"
             android:layout_marginLeft="30dp"
             android:hint="HH:MM"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set reminder:"
+        android:layout_marginLeft="16dp"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/examination_days_before_et"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:inputType="number"
+            android:hint="00"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="days"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/examination_hours_before_et"
+            android:hint="00"
+            android:layout_marginLeft="8dp"
+            android:inputType="number"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="hours and"
+            />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:hint="00"
+            android:id="@+id/examination_minutes_before_et"
+            android:inputType="number"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="minutes before event."
+            android:layout_marginBottom="20dp"/>
+
 
     </LinearLayout>
 

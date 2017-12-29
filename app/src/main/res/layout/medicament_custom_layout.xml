@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="6dp"
         android:text="Reminder type"
         android:textSize="16sp" />
 
@@ -48,7 +48,7 @@
             android:id="@+id/medicament_none_cb"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="16dp"
             android:layout_marginLeft="40dp"
             android:text="none" />
 
@@ -69,7 +69,7 @@
                 android:id="@+id/medicament_sms_cb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="30dp"
+                android:layout_marginBottom="12dp"
                 android:layout_marginLeft="40dp"
                 android:text="sms" />
 
@@ -90,7 +90,7 @@
         android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/examination_day_et"
+            android:id="@+id/medicament_day_et"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
@@ -103,7 +103,7 @@
             android:text="/" />
 
         <EditText
-            android:id="@+id/examination_month_et"
+            android:id="@+id/medicament_month_et"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="MM"
@@ -115,14 +115,15 @@
             android:text="/"/>
 
         <EditText
-            android:id="@+id/examination_year_et"
+            android:id="@+id/medicament_year_et"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="YYYY"
             android:inputType="number"
-            android:layout_marginBottom="20dp"/>
+            android:layout_marginBottom="10dp"/>
 
         <EditText
+            android:id="@+id/medicament_time_et"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="time"
@@ -144,6 +145,7 @@
             android:textSize="16dp" />
 
         <EditText
+            android:id="@+id/medicament_duration_et"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="number"
@@ -159,6 +161,42 @@
             android:text="days"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:text="Set alarm "/>
+
+        <EditText
+            android:id="@+id/medicament_hours_before_et"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:hint="00"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="hours and"/>
+
+        <EditText
+            android:id="@+id/medicament_minutes_before_et"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="00"
+            android:inputType="number" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="minutes before event."/>
+    </LinearLayout>
 
 
     <LinearLayout
