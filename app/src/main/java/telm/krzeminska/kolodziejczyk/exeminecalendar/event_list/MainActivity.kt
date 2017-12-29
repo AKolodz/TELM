@@ -89,14 +89,20 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
         dialogView.examination_save_bt.setOnClickListener({
             val name = dialogView.examination_name_et.text.toString()
             val description = dialogView.examination_place_et.text.toString()
-            val dateTime: LocalDateTime = LocalDateTime.of(
-                    dialogView.examination_year_et.text.toString().toInt(),
-                    dialogView.examination_month_et.text.toString().toInt(),
-                    dialogView.examination_day_et.text.toString().toInt(),
-                    dialogView.examination_time_et.text.toString().substringBefore(":").toInt(),
-                    dialogView.examination_time_et.text.toString().substringAfter(":").toInt()
-            )
-
+            val dateTime: LocalDateTime =
+                    if (dialogView.examination_year_et.text.toString().isEmpty() ||
+                            dialogView.examination_month_et.text.toString().isEmpty() ||
+                            dialogView.examination_day_et.text.toString().isEmpty() ||
+                            dialogView.examination_time_et.text.toString().isEmpty()) {
+                        LocalDateTime.now().plusDays(1)
+                    } else {
+                        LocalDateTime.of(
+                                dialogView.examination_year_et.text.toString().toInt(),
+                                dialogView.examination_month_et.text.toString().toInt(),
+                                dialogView.examination_day_et.text.toString().toInt(),
+                                dialogView.examination_time_et.text.toString().substringBefore(":").toInt(),
+                                dialogView.examination_time_et.text.toString().substringAfter(":").toInt())
+                    }
             val days: Int = dialogView.examination_days_before_et.text.toString().let {
                 if (it.isEmpty())
                     0
@@ -125,6 +131,7 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
                     }
             val eventToSave = Event(null, name, description, dateTime, null, reminder, EventType.EXAMINATION)
             presenter.saveEvent(eventToSave)
+            presenter.getEvents()
         })
 
         dialogView.examination_back_bt.setOnClickListener({
