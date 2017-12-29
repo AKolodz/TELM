@@ -142,15 +142,32 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
         dialogView.medicament_save_bt.setOnClickListener({
             val name = dialogView.medicament_name_et.text.toString()
             val description = dialogView.medicament_dose_et.text.toString()
-            val dateTime: LocalDateTime = LocalDateTime.of(
-                    dialogView.medicament_year_et.text.toString().toInt(),
-                    dialogView.medicament_month_et.text.toString().toInt(),
-                    dialogView.medicament_day_et.text.toString().toInt(),
-                    dialogView.medicament_time_et.text.toString().substringBefore(":").toInt(),
-                    dialogView.medicament_time_et.text.toString().substringAfter(":").toInt()
-            )
-            val hours = dialogView.medicament_hours_before_et.text.toString().toInt()
-            val minutes = dialogView.medicament_minutes_before_et.text.toString().toInt()
+            val dateTime: LocalDateTime =
+                    if (dialogView.medicament_year_et.text.toString().isEmpty() ||
+                            dialogView.medicament_month_et.text.toString().isEmpty() ||
+                            dialogView.medicament_day_et.text.toString().isEmpty() ||
+                            dialogView.medicament_time_et.text.toString().isEmpty()) {
+                        LocalDateTime.now().plusDays(1)
+                    } else {
+                        LocalDateTime.of(
+                                dialogView.medicament_year_et.text.toString().toInt(),
+                                dialogView.medicament_month_et.text.toString().toInt(),
+                                dialogView.medicament_day_et.text.toString().toInt(),
+                                dialogView.medicament_time_et.text.toString().substringBefore(":").toInt(),
+                                dialogView.medicament_time_et.text.toString().substringAfter(":").toInt())
+                    }
+            val hours: Int = dialogView.medicament_hours_before_et.text.toString().let {
+                if (it.isEmpty())
+                    0
+                else
+                    it.toInt()
+            }
+            val minutes = dialogView.medicament_minutes_before_et.text.toString().let {
+                if (it.isEmpty())
+                    0
+                else
+                    it.toInt()
+            }
             val timeToEvent = TimeToEvent(0, hours, minutes)
             val reminder =
                     when {
@@ -159,14 +176,15 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
                         dialogView.medicament_sms_cb.isChecked -> Pair(ReminderType.SMS, timeToEvent)
                         else -> Pair(ReminderType.NONE, timeToEvent)
                     }
-            val durationDays = dialogView.medicament_duration_et.text.toString().toInt()
-
-
+            val durationDays = dialogView.medicament_duration_et.text.toString().let {
+                if (it.isEmpty())
+                    1
+                else
+                    it.toInt()
+            }
             val eventToSave = Event(null, name, description, dateTime, durationDays, reminder, EventType.MEDICAMENT)
             presenter.saveEvent(eventToSave)
-        })
-        dialogView.medicament_back_bt.setOnClickListener({
-            Toast.makeText(this, "I'm redundant", Toast.LENGTH_SHORT).show()
+            presenter.getEvents()
         })
         dialogCustomBox.setNegativeButton("Cancel", { dialogInterface, i -> dialogInterface.dismiss() })
         dialogCustomBox.setView(dialogView).show()
