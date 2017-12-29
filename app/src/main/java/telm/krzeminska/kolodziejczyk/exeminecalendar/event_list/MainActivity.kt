@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
         val inflater = this.layoutInflater
         val dialogView = inflater.inflate(R.layout.examination_custom_layout, null)
 
-        dialogView.examination_save_bt.setOnClickListener({
+        dialogCustomBox.setPositiveButton("Save", { dialogInterface, i ->
             val name = dialogView.examination_name_et.text.toString()
             val description = dialogView.examination_place_et.text.toString()
             val dateTime: LocalDateTime =
@@ -132,12 +132,11 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
             val eventToSave = Event(null, name, description, dateTime, null, reminder, EventType.EXAMINATION)
             presenter.saveEvent(eventToSave)
             presenter.getEvents()
+            dialogInterface.dismiss()
         })
-
-        dialogView.examination_back_bt.setOnClickListener({
-            Toast.makeText(this, "I'm redundant", Toast.LENGTH_SHORT).show()
+        dialogCustomBox.setNegativeButton("Cancel", { dialogInterface, i ->
+            dialogInterface.dismiss()
         })
-        dialogCustomBox.setNegativeButton("Cancel", { dialogInterface, i -> dialogInterface.dismiss() })
         dialogCustomBox.setView(dialogView).show()
     }
 
@@ -146,7 +145,7 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
         val inflater = this.layoutInflater
         val dialogView = inflater.inflate(R.layout.medicament_custom_layout, null)
 
-        dialogView.medicament_save_bt.setOnClickListener({
+        dialogCustomBox.setPositiveButton("Save", { dialogInterface, i ->
             val name = dialogView.medicament_name_et.text.toString()
             val description = dialogView.medicament_dose_et.text.toString()
             val dateTime: LocalDateTime =
@@ -192,6 +191,7 @@ class MainActivity : AppCompatActivity(), EventListMVP.View {
             val eventToSave = Event(null, name, description, dateTime, durationDays, reminder, EventType.MEDICAMENT)
             presenter.saveEvent(eventToSave)
             presenter.getEvents()
+            dialogInterface.dismiss()
         })
         dialogCustomBox.setNegativeButton("Cancel", { dialogInterface, i -> dialogInterface.dismiss() })
         dialogCustomBox.setView(dialogView).show()
