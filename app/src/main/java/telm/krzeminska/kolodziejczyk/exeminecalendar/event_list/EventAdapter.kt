@@ -24,8 +24,14 @@ class EventAdapter(context: Context?, var resource: Int, private var objects: Mu
 
         val name = row.name
         val description = row.description
+        val date = row.date
+        val reminderType = row.alarmType
+        val duration = row.duration
         name.text = objects?.get(position)?.name
         description.text = objects?.get(position)?.description
+        date.text = objects?.get(position)?.dateTime?.dayOfMonth.toString() + " "+ objects?.get(position)?.dateTime?.month.toString()+" "+objects?.get(position)?.dateTime?.year.toString() + "    " + objects?.get(position)?.dateTime?.hour + ":" + objects?.get(position)?.dateTime?.minute
+        reminderType.text = objects?.get(position)?.reminder?.first.toString()
+        duration.text=objects?.get(position)?.durationDays?.toString()
 
         return row
     }
