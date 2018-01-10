@@ -9,7 +9,7 @@
     tools:showIn="@layout/activity_main">
 
     <ListView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_weight="0"
@@ -24,6 +24,8 @@
 
         <Button
             android:id="@+id/show_calendar_button"
+            android:textColor="@color/colorPrimaryDark"
+            android:backgroundTint="@android:color/darker_gray"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
